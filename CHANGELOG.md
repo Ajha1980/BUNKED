@@ -1,3 +1,7 @@
+## v2.1.1
+- Fixed the desktop hero layout selector (`.hero`) so the paper-cut illustration sits on the right side of the hero copy rather than dropping below the action buttons.
+- Kept the existing small-screen responsive stacking behavior.
+
 # Changelog
 
 ## v2.1.0
