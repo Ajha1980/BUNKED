@@ -10,7 +10,7 @@ An attendance tracker and bunk-budget calculator, maintained as three separate v
 |---|---|---|
 | [`v1/`](v1/) | V1.0.0 | Original standalone HTML calculator |
 | [`v2/`](v2/) | V2.1.1 | Flask + SQLite multi-subject dashboard |
-| [`v3/`](v3/) | V3.0.1 | Latest dashboard, browser-saved attendance, click sounds, mechanical typing sounds, sound toggle and refined hover states |
+| [`v3/`](v3/) | V3.0.2 | Latest dashboard, browser-saved attendance, click sounds, mechanical typing sounds, adjustable Sound Deck and refined hover states |
 
 Each version is kept in its own folder. V2 remains the V2 codebase; V3 is maintained separately.
 

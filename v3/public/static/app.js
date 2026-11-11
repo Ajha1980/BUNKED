@@ -2,7 +2,7 @@
 
 const STORAGE_KEY = 'bunked.v3.subjects';
 const THEME_KEY = 'bunked.v3.theme';
-const SOUND_KEY = 'bunked.v3.sound';
+const SOUND_KEY = 'bunked.v3.sounddeck';
 const $ = (id) => document.getElementById(id);
 let subjects = [];
 let activeId = null;
@@ -11,6 +11,7 @@ let toastTimer = null;
 let saveTimer = null;
 let isSaving = false;
 let soundEnabled = true;
+let soundSettings = { master: true, click: true, typing: true, volume: 88 };
 let audioContext = null;
 let lastKeySoundAt = 0;
 
@@ -35,43 +36,111 @@ function playTone(context, frequency, endFrequency, volume, duration, wave = 'tr
   const gain = context.createGain();
   oscillator.type = wave;
   oscillator.frequency.setValueAtTime(frequency, start);
-  oscillator.frequency.exponentialRampToValueAtTime(endFrequency, start + duration);
+  oscillator.frequency.exponentialRampToValueAtTime(Math.max(1, endFrequency), start + duration);
   gain.gain.setValueAtTime(0.0001, start);
-  gain.gain.exponentialRampToValueAtTime(volume, start + 0.002);
+  gain.gain.exponentialRampToValueAtTime(Math.max(0.00011, volume), start + 0.002);
   gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
   oscillator.connect(gain);
   gain.connect(context.destination);
   oscillator.start(start);
-  oscillator.stop(start + duration + 0.004);
+  oscillator.stop(start + duration + 0.005);
 }
-function playUiSound(kind = 'click') {
-  if (!soundEnabled || document.hidden) return;
+function playNoise(context, volume, duration, highpass = 900) {
+  const length = Math.max(8, Math.floor(context.sampleRate * duration));
+  const buffer = context.createBuffer(1, length, context.sampleRate);
+  const data = buffer.getChannelData(0);
+  for (let i = 0; i < length; i += 1) {
+    const fade = Math.pow(1 - i / length, 2.2);
+    data[i] = (Math.random() * 2 - 1) * fade;
+  }
+  const source = context.createBufferSource();
+  const filter = context.createBiquadFilter();
+  const gain = context.createGain();
+  filter.type = 'highpass';
+  filter.frequency.value = highpass;
+  filter.Q.value = 0.7;
+  gain.gain.setValueAtTime(Math.max(0.0001, volume), context.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.0001, context.currentTime + duration);
+  source.buffer = buffer;
+  source.connect(filter);
+  filter.connect(gain);
+  gain.connect(context.destination);
+  source.start();
+  source.stop(context.currentTime + duration + 0.005);
+}
+function getAudioContext() {
   const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-  if (!AudioContextClass) return;
+  if (!AudioContextClass) return null;
+  if (!audioContext) audioContext = new AudioContextClass();
+  if (audioContext.state === 'suspended') audioContext.resume().catch(() => {});
+  return audioContext;
+}
+function playUiSound(kind = 'click', preview = false) {
+  if (document.hidden || !soundSettings.master) return;
+  if (kind === 'click' && !soundSettings.click) return;
+  if (kind === 'type' && !soundSettings.typing) return;
+  const context = getAudioContext();
+  if (!context) return;
+  const level = Math.max(0, Math.min(1, soundSettings.volume / 100));
+  if (level <= 0) return;
   try {
-    if (!audioContext) audioContext = new AudioContextClass();
-    if (audioContext.state === 'suspended') audioContext.resume().catch(() => {});
     if (kind === 'type') {
-      // A very short, low-volume two-part keycap "thock".
-      playTone(audioContext, 185, 112, 0.012, 0.034, 'triangle');
-      playTone(audioContext, 1850, 1120, 0.0045, 0.012, 'sine');
+      // Fuller mechanical keycap: low thock, crisp stem transient and a tiny noise edge.
+      playTone(context, 148, 72, 0.052 * level, 0.046, 'triangle');
+      playTone(context, 2180, 940, 0.023 * level, 0.014, 'square');
+      playNoise(context, 0.016 * level, 0.018, 1250);
     } else {
-      // A quiet, crisp switch click for buttons and controls.
-      playTone(audioContext, 1280, 690, 0.010, 0.026, 'triangle');
-      playTone(audioContext, 2380, 1460, 0.0035, 0.010, 'sine');
+      // Tactile mouse-switch click: short filtered noise snap with a bright plastic tick.
+      playNoise(context, 0.052 * level, 0.018, 1550);
+      playTone(context, 1720, 720, 0.045 * level, 0.021, 'square');
+      playTone(context, 520, 205, 0.021 * level, 0.024, 'triangle');
     }
   } catch (error) {
-    // Audio is an enhancement; never let sound block a calculator action.
     console.debug('BUNKED sound unavailable:', error);
   }
 }
-function applySound(enabled) {
-  soundEnabled = Boolean(enabled);
-  $('soundBtn').textContent = soundEnabled ? '♪' : '×';
-  $('soundBtn').setAttribute('aria-label', soundEnabled ? 'Turn interface sounds off' : 'Turn interface sounds on');
-  $('soundBtn').title = soundEnabled ? 'Interface sounds on' : 'Interface sounds off';
-  $('soundBtn').classList.toggle('sound-off', !soundEnabled);
-  try { localStorage.setItem(SOUND_KEY, soundEnabled ? 'on' : 'off'); } catch (_) {}
+function persistSoundSettings() {
+  try { localStorage.setItem(SOUND_KEY, JSON.stringify(soundSettings)); } catch (_) {}
+}
+function updateSoundDeck() {
+  soundEnabled = soundSettings.master;
+  $('masterToggle').checked = soundSettings.master;
+  $('clickToggle').checked = soundSettings.click;
+  $('typingToggle').checked = soundSettings.typing;
+  $('soundVolume').value = soundSettings.volume;
+  $('soundVolumeValue').textContent = soundSettings.volume + '%';
+  $('soundState').textContent = soundSettings.master ? 'LIVE / ' + soundSettings.volume + '%' : 'MUTED';
+  $('soundBtn').classList.toggle('is-live', soundSettings.master);
+  $('soundBtn').setAttribute('aria-expanded', String(!$('soundDeck').hidden));
+  $('soundBtn').setAttribute('aria-label', $('soundDeck').hidden ? 'Open sound deck' : 'Close sound deck');
+  $('soundDeck').hidden = !$('soundBtn').getAttribute('aria-expanded') || $('soundBtn').getAttribute('aria-expanded') !== 'true';
+  document.querySelectorAll('.sound-meter i').forEach((bar, index) => {
+    bar.style.setProperty('--bar-level', soundSettings.master && soundSettings.volume > 0 ? String(0.4 + ((index * 7) % 5) / 8) : '0.12');
+  });
+}
+function setSoundDeckOpen(open) {
+  $('soundDeck').hidden = !open;
+  $('soundBtn').setAttribute('aria-expanded', String(open));
+  $('soundBtn').setAttribute('aria-label', open ? 'Close sound deck' : 'Open sound deck');
+  $('soundBtn').classList.toggle('panel-open', open);
+}
+function loadSoundSettings() {
+  try {
+    const stored = localStorage.getItem(SOUND_KEY);
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      soundSettings = {
+        master: parsed.master !== false,
+        click: parsed.click !== false,
+        typing: parsed.typing !== false,
+        volume: Math.max(0, Math.min(100, Number(parsed.volume ?? 88)))
+      };
+    } else {
+      // Migrate the previous simple on/off preference.
+      soundSettings.master = localStorage.getItem('bunked.v3.sound') !== 'off';
+    }
+  } catch (_) {}
+  updateSoundDeck();
 }
 
 function saveAll() {
@@ -351,8 +420,65 @@ function wireEvents() {
     selectSubject(demo.id);
     toast('Demo subject added.');
   });
-  $('soundBtn').addEventListener('click', () => {
-    applySound(!soundEnabled);
+  $('soundBtn').addEventListener('click', (event) => {
+    event.stopPropagation();
+    setSoundDeckOpen($('soundDeck').hidden);
+    playUiSound('click');
+  });
+  $('masterToggle').addEventListener('change', () => {
+    soundSettings.master = $('masterToggle').checked;
+    updateSoundDeck();
+    persistSoundSettings();
+    if (soundSettings.master) playUiSound('click');
+  });
+  $('clickToggle').addEventListener('change', () => {
+    soundSettings.click = $('clickToggle').checked;
+    updateSoundDeck();
+    persistSoundSettings();
+    if (soundSettings.click) playUiSound('click');
+  });
+  $('typingToggle').addEventListener('change', () => {
+    soundSettings.typing = $('typingToggle').checked;
+    updateSoundDeck();
+    persistSoundSettings();
+    if (soundSettings.typing) playUiSound('type');
+  });
+  $('soundVolume').addEventListener('input', () => {
+    soundSettings.volume = Number($('soundVolume').value);
+    updateSoundDeck();
+    persistSoundSettings();
+  });
+  $('testClick').addEventListener('click', () => {
+    if (soundSettings.master && soundSettings.click) playUiSound('click');
+  });
+  $('testType').addEventListener('click', () => {
+    if (soundSettings.master && soundSettings.typing) {
+      playUiSound('type');
+      window.setTimeout(() => playUiSound('type'), 78);
+    }
+  });
+  document.addEventListener('click', (event) => {
+    const target = event.target instanceof Element
+      ? event.target.closest('button:not(:disabled), a[href], input:not([type="range"]), select, textarea, summary, [role="button"], [data-click-sound]')
+      : null;
+    if (!target || target.closest('[data-no-auto-sound]') || target.id === 'soundBtn') return;
+    playUiSound('click');
+    if (!$('soundDeck').hidden && !target.closest('#soundDeck')) setSoundDeckOpen(false);
+  });
+  document.addEventListener('keydown', (event) => {
+    if (event.ctrlKey || event.metaKey || event.altKey || event.repeat) return;
+    const field = event.target instanceof Element
+      ? event.target.closest('input:not([type="range"]):not([type="checkbox"]):not([type="radio"]), textarea, [contenteditable="true"]')
+      : null;
+    if (!field || !(event.key.length === 1 || ['Backspace', 'Delete', 'Enter'].includes(event.key))) return;
+    const now = performance.now();
+    if (now - lastKeySoundAt < 32) return;
+    lastKeySoundAt = now;
+    playUiSound('type');
+  }, true);
+  document.addEventListener('pointerdown', (event) => {
+    if ($('soundDeck').hidden || event.target.closest('#soundDeck') || event.target.closest('#soundBtn')) return;
+    setSoundDeckOpen(false);
   });
   // One soft sound for actionable controls, including controls added after initial render.
   document.addEventListener('click', (event) => {
@@ -388,6 +514,6 @@ function wireEvents() {
 
 loadAll();
 applyTheme((() => { try { return localStorage.getItem(THEME_KEY) || 'dark'; } catch (_) { return 'dark'; } })());
-applySound((() => { try { return localStorage.getItem(SOUND_KEY) !== 'off'; } catch (_) { return true; } })());
+loadSoundSettings();
 wireEvents();
 selectSubject(activeId);

@@ -1,5 +1,13 @@
 # Changelog
 
+## v3.0.2
+- Increased the mouse-click sound to a more pronounced tactile switch snap.
+- Increased the mechanical keyboard sound with a fuller low thock, sharper key transient and short noise edge.
+- Added a compact custom Sound Deck in the navigation bar.
+- Added master mute, independent Mouse Click and Keyboard channels, adjustable 0–100 output gain and test buttons.
+- Added animated audio level bars and persisted all sound preferences in browser local storage.
+- Kept the controller styled for both dark and light themes.
+
 ## v3.0.1
 - Added quiet synthesized tactile click sounds for buttons and interactive controls.
 - Added a soft mechanical-keyboard sound for text entry, with key-repeat throttling.
