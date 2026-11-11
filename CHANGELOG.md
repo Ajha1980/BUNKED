@@ -1,18 +1,21 @@
-## v2.1.1
-- Fixed the desktop hero layout selector (`.hero`) so the paper-cut illustration sits on the right side of the hero copy rather than dropping below the action buttons.
-- Kept the existing small-screen responsive stacking behavior.
-
 # Changelog
 
+## v3.0.0
+- Fixed class logging so Present and Missed each update counts exactly once and create one corresponding history entry.
+- Moved subject data and class history to browser local storage, eliminating serverless SQLite instance mismatch and "Subject not found" errors.
+- Made manual count edits update calculations without fabricating a class-log event.
+- Rebuilt Add Subject dialog submission and explicit Cancel behavior.
+- Made the entire interface react to dark/light mode, including paper-cut notes, NO GUESSWORK, KEEP IT REAL, outcome panel, forecast, formula, history, dialog, and footer.
+- Kept the calculator, bunk budget, meter, status and future-absence forecast reactive to the selected subject.
+
+## v2.1.1
+- Fixed the desktop hero layout selector so the paper-cut artwork sits on the right of the hero copy.
+
 ## v2.1.0
-- Restored the supplied final dashboard layout with charcoal, sand, electric-blue accents, paper cards, and the subject tabs/input/bunk-budget layout.
-- Fixed a JavaScript syntax error caused by an apostrophe inside a single-quoted string; the parse error prevented every UI event listener, including Add Subject, from running.
-- Reworked Add Subject to handle the dialog form's submit event, support Enter key submission, show a temporary disabled/loading state, and handle cancel cleanly.
-- Added Vercel public copies of the CSS and JavaScript assets.
-- Configured Vercel SQLite to use writable /tmp storage; this is temporary serverless storage, not durable shared persistence.
+- Restored the supplied dashboard design and repaired the subject creation handler.
 
 ## v2.0.0
-- Final full-stack attendance control room with Flask, SQLite, configurable attendance targets, class logging, history, forecast, and C++ calculation engine.
+- Full-stack attendance control room with Flask, SQLite and multi-subject tracking.
 
 ## v1.0.0
-- Initial standalone HTML/CSS/JavaScript attendance calculator.
+- Initial standalone calculator.
