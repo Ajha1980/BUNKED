@@ -1,8 +1,8 @@
 # BUNKED. — Skip Smart. Stay Safe.
 
-An attendance tracker and bunk-budget calculator, maintained as three separate versions.
+A multi-version attendance tracker and bunk-budget calculator.
 
-<sub>**Live V3 website:** https://bunked-arp21.vercel.app</sub>
+**Live website:** [Open BUNKED V3](https://bunked-arp21.vercel.app)
 
 ## Project versions
 
@@ -10,42 +10,34 @@ An attendance tracker and bunk-budget calculator, maintained as three separate v
 |---|---|---|
 | [`v1/`](v1/) | V1.0.0 | Original standalone HTML calculator |
 | [`v2/`](v2/) | V2.1.1 | Flask + SQLite multi-subject dashboard |
-| [`v3/`](v3/) | V3.0.2 | Latest dashboard, browser-saved attendance, click sounds, mechanical typing sounds, adjustable Sound Deck and refined hover states |
+| [`v3/`](v3/) | V3.0.3 | Full-featured responsive dashboard for desktop, tablet and mobile; browser-saved attendance, history, forecast, dark/light themes, Sound Deck and synthesized tactile sounds |
 
-Each version is kept in its own folder. V2 remains the V2 codebase; V3 is maintained separately.
+Each version is kept in its own folder. V2 remains unchanged as the V2 codebase; V3 is maintained separately.
 
-## Open the live website
+## Launch V3
+[**Open the live BUNKED V3 website**](https://bunked-arp21.vercel.app)
 
-**[Launch BUNKED V3 on Vercel](https://bunked-arp21.vercel.app)**
+Vercel production deploys from the `v3/` folder.
 
-The Vercel production deployment uses the `v3/` folder.
-
-## Run V1 locally
-
+## Run V1
 Open `v1/index.html` directly in a browser.
 
-## Run V2 locally
-
+## Run V2
 ```powershell
 cd v2
 python -m pip install -r requirements.txt
 python app.py
 ```
 
-Then open the local development address printed by Flask (normally `http://127.0.0.1:5000`).
-
-## Run V3 locally
-
+## Run V3
 ```powershell
 cd v3
 python -m pip install -r requirements.txt
 python app.py
 ```
+Open the local development address printed by Flask (normally `http://127.0.0.1:5000`).
 
-Then open the local development address printed by Flask (normally `http://127.0.0.1:5000`).
-
-## V3 data and sound
-
-V3 saves subjects and the class log in the browser's local storage. Data stays in that browser profile; it does not automatically sync between devices. The sound control beside the theme switch turns interface sounds on or off. A click sound plays for interactive controls, and a quiet mechanical-key tap plays while typing.
+## V3 storage
+V3 saves subjects and the class log in the browser's local storage, in the current browser profile. It does not automatically sync across devices. For best continuity on a phone, use the same browser profile and do not clear site data.
 
 See [`CHANGELOG.md`](CHANGELOG.md) for release notes.

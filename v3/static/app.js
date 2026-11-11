@@ -476,31 +476,21 @@ function wireEvents() {
     lastKeySoundAt = now;
     playUiSound('type');
   }, true);
+  // Mobile virtual keyboards may emit input events without a usable keydown event.
+  document.addEventListener('input', (event) => {
+    const field = event.target instanceof Element
+      ? event.target.closest('input:not([type="range"]):not([type="checkbox"]):not([type="radio"]), textarea, [contenteditable="true"]')
+      : null;
+    if (!field || !['insertText', 'deleteContentBackward', 'deleteContentForward'].includes(event.inputType)) return;
+    const now = performance.now();
+    if (now - lastKeySoundAt < 32) return;
+    lastKeySoundAt = now;
+    playUiSound('type');
+  }, true);
   document.addEventListener('pointerdown', (event) => {
     if ($('soundDeck').hidden || event.target.closest('#soundDeck') || event.target.closest('#soundBtn')) return;
     setSoundDeckOpen(false);
   });
-  // One soft sound for actionable controls, including controls added after initial render.
-  document.addEventListener('click', (event) => {
-    const target = event.target instanceof Element
-      ? event.target.closest('button:not(:disabled), a[href], input, select, textarea, summary, [role="button"], [data-click-sound]')
-      : null;
-    if (target) playUiSound('click');
-  });
-  // Mechanical key taps only while entering text; modifier and navigation keys stay silent.
-  document.addEventListener('keydown', (event) => {
-    if (event.ctrlKey || event.metaKey || event.altKey || event.repeat) return;
-    const field = event.target instanceof Element
-      ? event.target.closest('input:not([type="range"]):not([type="checkbox"]):not([type="radio"]), textarea, [contenteditable="true"]')
-      : null;
-    if (!field) return;
-    if (event.key.length === 1 || ['Backspace', 'Delete', 'Enter'].includes(event.key)) {
-      const now = performance.now();
-      if (now - lastKeySoundAt < 24) return;
-      lastKeySoundAt = now;
-      playUiSound('type');
-    }
-  }, true);
   $('themeBtn').addEventListener('click', () => {
     applyTheme(document.body.classList.contains('light') ? 'dark' : 'light');
   });

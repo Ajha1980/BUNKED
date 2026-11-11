@@ -1,5 +1,13 @@
 # Changelog
 
+## v3.0.3
+- Added a touch-first responsive layout for phones and tablets without removing desktop features.
+- Made subject tabs horizontally swipeable instead of hiding subjects on narrow screens.
+- Kept the complete dashboard, bunk budget, forecast, formula, history and all attendance actions available in a vertical mobile layout.
+- Added touch-friendly hit areas, safe-area padding, mobile dialog sizing, and a viewport-fitted Sound Deck panel.
+- Added mobile virtual-keyboard input sound handling and removed duplicate global click/typing sound listeners to prevent doubled audio.
+- Added landscape phone and narrow-width refinements.
+
 ## v3.0.2
 - Increased the mouse-click sound to a more pronounced tactile switch snap.
 - Increased the mechanical keyboard sound with a fuller low thock, sharper key transient and short noise edge.
