@@ -1,26 +1,51 @@
 # BUNKED. — Skip Smart. Stay Safe.
 
-A student attendance and bunk calculator, released in versions.
+An attendance tracker and bunk-budget calculator, maintained as three separate versions.
 
-## Releases
-- **V1.0.0** — Standalone calculator in [`v1/`](v1/).
-- **V2.0.0** — Multi-subject Flask attendance control room in [`v2/`](v2/).
-- **V2.1.0 / V2.1.1** — UI, Add Subject and hero-layout fixes.
-- **V3.0.0** — Correct attendance/history behavior, working subject dialog, full dark/light theme, and browser-local persistence.
-- **V3.0.1** — Subtle interface click sounds, mechanical typing taps, sound toggle, and restrained hover/focus feedback.
+<sub>**Live V3 website:** https://bunked-arp21.vercel.app</sub>
 
-## Run V1
-Open `v1/index.html` in a browser.
+## Project versions
 
-## Run V2/V3
-```bash
+| Folder | Version | What it contains |
+|---|---|---|
+| [`v1/`](v1/) | V1.0.0 | Original standalone HTML calculator |
+| [`v2/`](v2/) | V2.1.1 | Flask + SQLite multi-subject dashboard |
+| [`v3/`](v3/) | V3.0.1 | Latest dashboard, browser-saved attendance, click sounds, mechanical typing sounds, sound toggle and refined hover states |
+
+Each version is kept in its own folder. V2 remains the V2 codebase; V3 is maintained separately.
+
+## Open the live website
+
+**[Launch BUNKED V3 on Vercel](https://bunked-arp21.vercel.app)**
+
+The Vercel production deployment uses the `v3/` folder.
+
+## Run V1 locally
+
+Open `v1/index.html` directly in a browser.
+
+## Run V2 locally
+
+```powershell
 cd v2
 python -m pip install -r requirements.txt
 python app.py
 ```
-Open http://127.0.0.1:5000.
 
-## V3 storage
-V3 saves its subjects and class log in browser local storage. It stays in the same browser profile and is not a cross-device cloud sync.
+Then open the local development address printed by Flask (normally `http://127.0.0.1:5000`).
 
-The `main` branch contains all versions. Version snapshots are preserved in the V1, V2 and V3 release branches.
+## Run V3 locally
+
+```powershell
+cd v3
+python -m pip install -r requirements.txt
+python app.py
+```
+
+Then open the local development address printed by Flask (normally `http://127.0.0.1:5000`).
+
+## V3 data and sound
+
+V3 saves subjects and the class log in the browser's local storage. Data stays in that browser profile; it does not automatically sync between devices. The sound control beside the theme switch turns interface sounds on or off. A click sound plays for interactive controls, and a quiet mechanical-key tap plays while typing.
+
+See [`CHANGELOG.md`](CHANGELOG.md) for release notes.

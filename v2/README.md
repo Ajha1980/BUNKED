@@ -1,22 +1,26 @@
-# BUNKED V3 — Attendance Control Room
+# BUNKED. — Attendance Control Room (V2)
 
-V3 fixes attendance logging, history, subject creation/cancellation, and the full dark/light theme.
+The final V2 dashboard matching the supplied local reference: charcoal backdrop, sand paper input card, electric-blue bunk budget, paper-cut accents, and a responsive attendance control room.
+
+## What's included
+- Multi-subject attendance tracking with configurable attendance targets.
+- Add, switch, rename, and delete subjects.
+- Live bunk budget and recovery calculation.
+- One-click attended / missed class logging.
+- SQLite persistence and per-subject class history.
+- Interactive what-if absence forecast.
+- Contrast toggle and responsive paper-cut dashboard.
+- Python Flask backend, HTML, CSS, JavaScript and a standalone C++ calculation engine.
 
 ## Run locally
 ```bash
 python -m pip install -r requirements.txt
 python app.py
 ```
-Open http://127.0.0.1:5000.
+Then open http://127.0.0.1:5000.
 
-## V3 behavior
-- Subject details and class history persist in this browser's local storage.
-- Each **I ATTENDED** click adds exactly one held class, one attended class, and one PRESENT history entry.
-- Each **I MISSED** click adds exactly one held class, no attended class, and one ABSENT history entry.
-- Editing counts manually updates the calculator but does not invent history records.
-- Subjects can be added, cancelled, renamed, switched, or deleted.
-- The dark/light switch changes the whole interface, including paper-cut labels, result panel, forecast, formula, history, dialog, and footer.
-- The forecast, bunk budget, attendance meter, and status recalculate from the selected subject.
+The app stores its local database in `bunked.db` beside `app.py`.
 
-## Data storage note
-V3 uses browser local storage, so data stays in the same browser profile on this device. It is not synced across different browsers/devices, and clearing site data can remove it. Export/backup and cloud sync can be added in a later release.
+## Vercel deployment note
+
+The hosted Flask function uses the writable `/tmp` directory for SQLite. This is temporary serverless storage and is not durable or shared across all function instances. Subjects or class logs can reset or appear inconsistent after cold starts or when requests reach different instances. Connect a managed database such as Neon Postgres or Turso before relying on hosted attendance records as your only copy.
