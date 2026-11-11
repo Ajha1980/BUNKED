@@ -2,6 +2,7 @@
 
 const STORAGE_KEY = 'bunked.v3.subjects';
 const THEME_KEY = 'bunked.v3.theme';
+const SOUND_KEY = 'bunked.v3.sound';
 const $ = (id) => document.getElementById(id);
 let subjects = [];
 let activeId = null;
@@ -9,6 +10,9 @@ let current = null;
 let toastTimer = null;
 let saveTimer = null;
 let isSaving = false;
+let soundEnabled = true;
+let audioContext = null;
+let lastKeySoundAt = 0;
 
 function makeId() {
   if (window.crypto && typeof window.crypto.randomUUID === 'function') return window.crypto.randomUUID();
@@ -25,6 +29,51 @@ function toast(message) {
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => $('toast').classList.remove('show'), 2300);
 }
+function playTone(context, frequency, endFrequency, volume, duration, wave = 'triangle') {
+  const start = context.currentTime;
+  const oscillator = context.createOscillator();
+  const gain = context.createGain();
+  oscillator.type = wave;
+  oscillator.frequency.setValueAtTime(frequency, start);
+  oscillator.frequency.exponentialRampToValueAtTime(endFrequency, start + duration);
+  gain.gain.setValueAtTime(0.0001, start);
+  gain.gain.exponentialRampToValueAtTime(volume, start + 0.002);
+  gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
+  oscillator.connect(gain);
+  gain.connect(context.destination);
+  oscillator.start(start);
+  oscillator.stop(start + duration + 0.004);
+}
+function playUiSound(kind = 'click') {
+  if (!soundEnabled || document.hidden) return;
+  const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+  if (!AudioContextClass) return;
+  try {
+    if (!audioContext) audioContext = new AudioContextClass();
+    if (audioContext.state === 'suspended') audioContext.resume().catch(() => {});
+    if (kind === 'type') {
+      // A very short, low-volume two-part keycap "thock".
+      playTone(audioContext, 185, 112, 0.012, 0.034, 'triangle');
+      playTone(audioContext, 1850, 1120, 0.0045, 0.012, 'sine');
+    } else {
+      // A quiet, crisp switch click for buttons and controls.
+      playTone(audioContext, 1280, 690, 0.010, 0.026, 'triangle');
+      playTone(audioContext, 2380, 1460, 0.0035, 0.010, 'sine');
+    }
+  } catch (error) {
+    // Audio is an enhancement; never let sound block a calculator action.
+    console.debug('BUNKED sound unavailable:', error);
+  }
+}
+function applySound(enabled) {
+  soundEnabled = Boolean(enabled);
+  $('soundBtn').textContent = soundEnabled ? '♪' : '×';
+  $('soundBtn').setAttribute('aria-label', soundEnabled ? 'Turn interface sounds off' : 'Turn interface sounds on');
+  $('soundBtn').title = soundEnabled ? 'Interface sounds on' : 'Interface sounds off';
+  $('soundBtn').classList.toggle('sound-off', !soundEnabled);
+  try { localStorage.setItem(SOUND_KEY, soundEnabled ? 'on' : 'off'); } catch (_) {}
+}
+
 function saveAll() {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(subjects));
@@ -302,6 +351,30 @@ function wireEvents() {
     selectSubject(demo.id);
     toast('Demo subject added.');
   });
+  $('soundBtn').addEventListener('click', () => {
+    applySound(!soundEnabled);
+  });
+  // One soft sound for actionable controls, including controls added after initial render.
+  document.addEventListener('click', (event) => {
+    const target = event.target instanceof Element
+      ? event.target.closest('button:not(:disabled), a[href], input, select, textarea, summary, [role="button"], [data-click-sound]')
+      : null;
+    if (target) playUiSound('click');
+  });
+  // Mechanical key taps only while entering text; modifier and navigation keys stay silent.
+  document.addEventListener('keydown', (event) => {
+    if (event.ctrlKey || event.metaKey || event.altKey || event.repeat) return;
+    const field = event.target instanceof Element
+      ? event.target.closest('input:not([type="range"]):not([type="checkbox"]):not([type="radio"]), textarea, [contenteditable="true"]')
+      : null;
+    if (!field) return;
+    if (event.key.length === 1 || ['Backspace', 'Delete', 'Enter'].includes(event.key)) {
+      const now = performance.now();
+      if (now - lastKeySoundAt < 24) return;
+      lastKeySoundAt = now;
+      playUiSound('type');
+    }
+  }, true);
   $('themeBtn').addEventListener('click', () => {
     applyTheme(document.body.classList.contains('light') ? 'dark' : 'light');
   });
@@ -315,5 +388,6 @@ function wireEvents() {
 
 loadAll();
 applyTheme((() => { try { return localStorage.getItem(THEME_KEY) || 'dark'; } catch (_) { return 'dark'; } })());
+applySound((() => { try { return localStorage.getItem(SOUND_KEY) !== 'off'; } catch (_) { return true; } })());
 wireEvents();
 selectSubject(activeId);

@@ -6,7 +6,8 @@ A student attendance and bunk calculator, released in versions.
 - **V1.0.0** — Standalone calculator in [`v1/`](v1/).
 - **V2.0.0** — Multi-subject Flask attendance control room in [`v2/`](v2/).
 - **V2.1.0 / V2.1.1** — UI, Add Subject and hero-layout fixes.
-- **V3.0.0** — Correct one-click attendance/history behavior, functional subject dialog and cancellation, full dark/light theme, and browser-local persistence.
+- **V3.0.0** — Correct attendance/history behavior, working subject dialog, full dark/light theme, and browser-local persistence.
+- **V3.0.1** — Subtle interface click sounds, mechanical typing taps, sound toggle, and restrained hover/focus feedback.
 
 ## Run V1
 Open `v1/index.html` in a browser.

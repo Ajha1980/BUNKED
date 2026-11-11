@@ -67,3 +67,26 @@ dialog{border:1px solid var(--line-strong);background:var(--dialog-bg);color:var
 @media(max-width:560px){.hero{display:block}.hero-art{margin:24px 0 0 auto;transform:none;width:245px;height:180px}.p1{width:120px;height:120px}.p2{width:145px;height:110px;font-size:20px}.scribble{right:0}.hero-actions{gap:16px}.subjectbar h2,.historysection h2{font-size:23px}.historytools{float:none;justify-content:space-between;margin:12px 0}.historyrow{grid-template-columns:.8fr 1fr 1.3fr;font-size:9px}.stats b{font-size:20px}.stats small{font-size:7px}.resultlabel{margin-top:32px}}
 @media(max-width:420px){.hero-art{width:215px}.navmeta{letter-spacing:.7px}.number{letter-spacing:-7px}.outtop{font-size:8px}.historyrow{grid-template-columns:1fr 1fr}.historyrow span:last-child{grid-column:1/-1}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
+
+/* V3.0.1 — tactile details, restrained hover and audio control */
+.nav-controls{display:flex;align-items:center;gap:8px}
+.soundbtn{font-family:'DM Mono',monospace;font-size:18px;line-height:1}
+.soundbtn.sound-off{opacity:.58}
+button,a,input,select,textarea,[role="button"]{-webkit-tap-highlight-color:transparent}
+button:not(:disabled),a,[role="button"]{transition:color .18s ease,background-color .18s ease,border-color .18s ease,box-shadow .18s ease,transform .18s ease}
+.tab:hover:not(.active){color:var(--blue);border-color:var(--blue);transform:translateY(-1px)}
+.tab.active:hover{box-shadow:0 3px 0 rgba(0,0,0,.12);transform:translateY(-1px)}
+.editor,.outcome,.darkcard{transition:transform .22s ease,box-shadow .22s ease,background-color .28s ease,color .28s ease,border-color .28s ease}
+.editor:hover,.darkcard:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(0,0,0,.09)}
+.outcome:hover{box-shadow:0 10px 24px rgba(0,0,0,.12)}
+.hero-art .paper{transition:transform .24s cubic-bezier(.2,.75,.25,1),box-shadow .24s ease,background .28s,color .28s}
+.hero-art:hover .p1{transform:translateY(-3px) rotate(-10deg);box-shadow:7px 12px 0 rgba(0,0,0,.22)}
+.hero-art:hover .p2{transform:translateY(-4px) rotate(8deg);box-shadow:7px 12px 0 rgba(0,0,0,.22)}
+.hero-art:hover .tape{transform:translateY(-2px) rotate(18deg)}
+.paperclip{transition:transform .2s ease,color .2s ease,background .28s}
+.formula:hover .paperclip{transform:translateY(-2px) rotate(-5deg);color:var(--blue)}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--blue);outline-offset:3px}
+button:active:not(:disabled){transform:translateY(1px) scale(.99)}
+::selection{background:var(--blue);color:#fff}
+@media(hover:none){.editor:hover,.darkcard:hover,.outcome:hover{transform:none;box-shadow:none}.hero-art:hover .p1,.hero-art:hover .p2{transform:none}}
+@media(prefers-reduced-motion:reduce){.editor:hover,.darkcard:hover,.outcome:hover,.tab:hover,.hero-art:hover .p1,.hero-art:hover .p2{transform:none;box-shadow:none}}

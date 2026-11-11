@@ -9,14 +9,14 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/static/style.css?v=3.0.0">
+  <link rel="stylesheet" href="/static/style.css?v=3.0.1">
 </head>
 <body>
   <div class="grain" aria-hidden="true"></div>
   <nav class="nav wrap">
     <a class="logo" href="/" aria-label="BUNKED home">BUNKED<span>.</span></a>
     <div class="navmeta"><i></i> ATTENDANCE CONTROL ROOM <b>V.03</b></div>
-    <button class="iconbtn" id="themeBtn" type="button" aria-label="Switch to light mode" title="Switch theme">◐</button>
+    <div class="nav-controls"><button class="iconbtn soundbtn" id="soundBtn" type="button" aria-label="Turn interface sounds off" title="Interface sounds on">♪</button><button class="iconbtn" id="themeBtn" type="button" aria-label="Switch to light mode" title="Switch theme">◐</button></div>
   </nav>
 
   <header class="hero wrap">
@@ -121,6 +121,6 @@
     </form>
   </dialog>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
-  <script src="/static/app.js?v=3.0.0" defer></script>
+  <script src="/static/app.js?v=3.0.1" defer></script>
 </body>
 </html>

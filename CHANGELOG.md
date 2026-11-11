@@ -1,5 +1,12 @@
 # Changelog
 
+## v3.0.1
+- Added quiet synthesized tactile click sounds for buttons and interactive controls.
+- Added a soft mechanical-keyboard sound for text entry, with key-repeat throttling.
+- Added a sound on/off control and persisted the preference per browser.
+- Added subtle control, tab, card, paper-cut, and formula-label hover/active states.
+- Added visible keyboard focus styles and touch-device/reduced-motion fallbacks.
+
 ## v3.0.0
 - Fixed class logging so Present and Missed each update counts exactly once and create one corresponding history entry.
 - Moved subject data and class history to browser local storage, eliminating serverless SQLite instance mismatch and "Subject not found" errors.
