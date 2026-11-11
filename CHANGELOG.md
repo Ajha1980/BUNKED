@@ -1,11 +1,14 @@
 # Changelog
 
+## v2.1.0
+- Restored the supplied final dashboard layout with charcoal, sand, electric-blue accents, paper cards, and the subject tabs/input/bunk-budget layout.
+- Fixed a JavaScript syntax error caused by an apostrophe inside a single-quoted string; the parse error prevented every UI event listener, including Add Subject, from running.
+- Reworked Add Subject to handle the dialog form's submit event, support Enter key submission, show a temporary disabled/loading state, and handle cancel cleanly.
+- Added Vercel public copies of the CSS and JavaScript assets.
+- Configured Vercel SQLite to use writable /tmp storage; this is temporary serverless storage, not durable shared persistence.
+
 ## v2.0.0
-- Final visual pass aligned the V2 interface with the supplied `white blue.html` reference: charcoal/sand gradients, sand headline and paper panels, electric blue reserved for focused highlights.
-- Finalized the multi-subject attendance control room with Flask, SQLite, configurable targets, attendance logging, history and forecast.
-- Fixed a JavaScript string syntax issue discovered during final validation.
-- Includes standalone C++ attendance calculation engine.
+- Final full-stack attendance control room with Flask, SQLite, configurable attendance targets, class logging, history, forecast, and C++ calculation engine.
 
 ## v1.0.0
 - Initial standalone HTML/CSS/JavaScript attendance calculator.
-- Live 75% bunk calculation, recovery count, demo presets, counters and progress meter.
