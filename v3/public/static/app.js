@@ -13,6 +13,8 @@ let isSaving = false;
 let soundEnabled = true;
 let soundSettings = { master: true, click: true, typing: true, volume: 88 };
 let audioContext = null;
+let mousePackBuffer = null;
+let mousePackPromise = null;
 let lastKeySoundAt = 0;
 
 function makeId() {
@@ -75,7 +77,44 @@ function getAudioContext() {
   if (audioContext.state === 'suspended') audioContext.resume().catch(() => {});
   return audioContext;
 }
-function playUiSound(kind = 'click', preview = false) {
+function playMousePackSample(context, level, button = 'left') {
+  if (!mousePackBuffer) return false;
+  const samples = {
+    left:  { offset: 0,        duration: 0.249979 },
+    right: { offset: 0.249979, duration: 0.239979 },
+    side:  { offset: 0.489958, duration: 0.129979 }
+  };
+  const sample = samples[button] || samples.left;
+  const source = context.createBufferSource();
+  const gain = context.createGain();
+  source.buffer = mousePackBuffer;
+  gain.gain.setValueAtTime(Math.min(2.0, level * 1.65), context.currentTime);
+  source.connect(gain);
+  gain.connect(context.destination);
+  source.start(context.currentTime, sample.offset, sample.duration);
+  return true;
+}
+function preloadMousePack() {
+  if (!mousePackPromise) {
+    mousePackPromise = fetch('/static/audio/asmr-mouse.ogg', { cache: 'force-cache' })
+      .then((response) => {
+        if (!response.ok) throw new Error('Mouse sound pack could not be loaded.');
+        return response.arrayBuffer();
+      })
+      .then((bytes) => getAudioContext().decodeAudioData(bytes))
+      .then((buffer) => {
+        mousePackBuffer = buffer;
+        return buffer;
+      })
+      .catch((error) => {
+        mousePackPromise = null;
+        console.warn('BUNKED mouse sound pack:', error);
+        return null;
+      });
+  }
+  return mousePackPromise;
+}
+function playUiSound(kind = 'click', preview = false, mouseButton = 'left') {
   if (document.hidden || !soundSettings.master) return;
   if (kind === 'click' && !soundSettings.click) return;
   if (kind === 'type' && !soundSettings.typing) return;
@@ -85,12 +124,11 @@ function playUiSound(kind = 'click', preview = false) {
   if (level <= 0) return;
   try {
     if (kind === 'type') {
-      // Fuller mechanical keycap: low thock, crisp stem transient and a tiny noise edge.
       playTone(context, 148, 72, 0.052 * level, 0.046, 'triangle');
       playTone(context, 2180, 940, 0.023 * level, 0.014, 'square');
       playNoise(context, 0.016 * level, 0.018, 1250);
-    } else {
-      // Tactile mouse-switch click: short filtered noise snap with a bright plastic tick.
+    } else if (!playMousePackSample(context, level, mouseButton)) {
+      preloadMousePack();
       playNoise(context, 0.052 * level, 0.018, 1550);
       playTone(context, 1720, 720, 0.045 * level, 0.021, 'square');
       playTone(context, 520, 205, 0.021 * level, 0.024, 'triangle');
@@ -99,6 +137,7 @@ function playUiSound(kind = 'click', preview = false) {
     console.debug('BUNKED sound unavailable:', error);
   }
 }
+
 function persistSoundSettings() {
   try { localStorage.setItem(SOUND_KEY, JSON.stringify(soundSettings)); } catch (_) {}
 }
@@ -411,6 +450,7 @@ function wireEvents() {
     activeId = subjects[0].id;
     saveAll();
     selectSubject(activeId);
+preloadMousePack();
     toast('Subject and its class log deleted.');
   });
   $('demoBtn').addEventListener('click', () => {
@@ -449,7 +489,10 @@ function wireEvents() {
     persistSoundSettings();
   });
   $('testClick').addEventListener('click', () => {
-    if (soundSettings.master && soundSettings.click) playUiSound('click');
+    if (soundSettings.master && soundSettings.click) {
+      playUiSound('click', false, 'left');
+      window.setTimeout(() => playUiSound('click', false, 'right'), 285);
+    }
   });
   $('testType').addEventListener('click', () => {
     if (soundSettings.master && soundSettings.typing) {
@@ -462,7 +505,7 @@ function wireEvents() {
       ? event.target.closest('button:not(:disabled), a[href], input:not([type="range"]), select, textarea, summary, [role="button"], [data-click-sound]')
       : null;
     if (!target || target.closest('[data-no-auto-sound]') || target.id === 'soundBtn') return;
-    playUiSound('click');
+    playUiSound('click', false, event.button === 2 ? 'right' : 'left');
     if (!$('soundDeck').hidden && !target.closest('#soundDeck')) setSoundDeckOpen(false);
   });
   document.addEventListener('keydown', (event) => {
@@ -490,6 +533,20 @@ function wireEvents() {
   document.addEventListener('pointerdown', (event) => {
     if ($('soundDeck').hidden || event.target.closest('#soundDeck') || event.target.closest('#soundBtn')) return;
     setSoundDeckOpen(false);
+  });
+  document.addEventListener('contextmenu', (event) => {
+    const target = event.target instanceof Element
+      ? event.target.closest('button, a[href], [role="button"], [data-click-sound]')
+      : null;
+    if (target) playUiSound('click', false, 'right');
+  });
+  document.addEventListener('pointerdown', (event) => {
+    if (event.button >= 3) {
+      const target = event.target instanceof Element
+        ? event.target.closest('button, a[href], [role="button"], [data-click-sound]')
+        : null;
+      if (target) playUiSound('click', false, 'side');
+    }
   });
   $('themeBtn').addEventListener('click', () => {
     applyTheme(document.body.classList.contains('light') ? 'dark' : 'light');

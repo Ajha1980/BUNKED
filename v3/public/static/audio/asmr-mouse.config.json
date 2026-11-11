@@ -1,0 +1,71 @@
+{
+  "config_version": "2",
+  "name": "ASMR MOUSE",
+  "author": "Angel Lozano",
+  "description": "User-supplied Mechvibes mouse sound pack integrated into BUNKED V3 Sound Deck.",
+  "audio_file": "asmr-mouse.ogg",
+  "soundpack_type": "Mouse",
+  "options": {
+    "recommended_volume": 1,
+    "random_pitch": false
+  },
+  "definitions": {
+    "MouseLeft": {
+      "timing": [
+        [
+          0,
+          249.97916666666666
+        ]
+      ]
+    },
+    "MouseRight": {
+      "timing": [
+        [
+          249.97916666666666,
+          489.9583333333333
+        ]
+      ]
+    },
+    "Mouse4": {
+      "timing": [
+        [
+          489.9583333333333,
+          619.9375
+        ]
+      ]
+    },
+    "Mouse5": {
+      "timing": [
+        [
+          489.9583333333333,
+          619.9375
+        ]
+      ]
+    },
+    "Mouse6": {
+      "timing": [
+        [
+          489.9583333333333,
+          619.9375
+        ]
+      ]
+    },
+    "Mouse7": {
+      "timing": [
+        [
+          489.9583333333333,
+          619.9375
+        ]
+      ]
+    },
+    "Mouse8": {
+      "timing": [
+        [
+          489.9583333333333,
+          619.9375
+        ]
+      ]
+    }
+  },
+  "integration_note": "Ogg converted to mono 24 kHz Vorbis for lighter mobile delivery; sample boundaries and durations preserved."
+}

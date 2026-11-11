@@ -1,5 +1,13 @@
 # Changelog
 
+## v3.0.4
+- Replaced the synthesized mouse-click imitation with the user-supplied ASMR MOUSE recording.
+- Mapped the uploaded pack's MouseLeft, MouseRight and side-button sample ranges to interface mouse actions.
+- Kept Sound Deck master mute, click toggle and 0–100 output gain connected to the recorded click samples.
+- Updated TEST CLICK to preview left and right click samples.
+- Preloads the mouse pack so normal interactions use the recording after it is decoded.
+- Retained the mechanical typing sound as a separate synthesized keycap sound.
+
 ## v3.0.3
 - Added a touch-first responsive layout for phones and tablets without removing desktop features.
 - Made subject tabs horizontally swipeable instead of hiding subjects on narrow screens.

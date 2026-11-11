@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/static/style.css?v=3.0.3">
+  <link rel="stylesheet" href="/static/style.css?v=3.0.4">
 </head>
 <body>
   <div class="grain" aria-hidden="true"></div>
@@ -28,14 +28,14 @@
           <div class="deck-title-row"><div><div class="deck-kicker">BUNKED ACOUSTICS</div><h3>Sound console<span>.</span></h3></div><span class="deck-number">001</span></div>
           <label class="master-row"><span><b>MASTER OUTPUT</b><small>All interface audio</small></span><input type="checkbox" id="masterToggle" checked><span class="deck-switch"></span></label>
           <div class="deck-channels">
-            <label class="channel-row"><span class="channel-icon">↳</span><span class="channel-copy"><b>MOUSE CLICK</b><small>TACTILE SWITCH</small></span><input type="checkbox" id="clickToggle" checked><span class="channel-check"></span></label>
+            <label class="channel-row"><span class="channel-icon">↳</span><span class="channel-copy"><b>MOUSE CLICK</b><small>ASMR MOUSE / L + R</small></span><input type="checkbox" id="clickToggle" checked><span class="channel-check"></span></label>
             <label class="channel-row"><span class="channel-icon">⌨</span><span class="channel-copy"><b>KEYBOARD</b><small>MECHANICAL THOCK</small></span><input type="checkbox" id="typingToggle" checked><span class="channel-check"></span></label>
           </div>
           <div class="deck-volume-head"><label for="soundVolume">OUTPUT GAIN</label><strong id="soundVolumeValue">88%</strong></div>
           <input class="deck-volume" type="range" id="soundVolume" min="0" max="100" value="88">
           <div class="sound-meter" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
-          <div class="deck-tests"><button id="testClick" type="button" data-no-auto-sound>TEST CLICK <span>↗</span></button><button id="testType" type="button" data-no-auto-sound>TEST KEYS <span>↗</span></button></div>
-          <div class="deck-foot"><span>HEADPHONES RECOMMENDED</span><span>V3.0.3</span></div>
+          <div class="deck-tests"><button id="testClick" type="button" data-no-auto-sound>TEST CLICK PAIR <span>↗</span></button><button id="testType" type="button" data-no-auto-sound>TEST KEYS <span>↗</span></button></div>
+          <div class="deck-foot"><span>HEADPHONES RECOMMENDED</span><span>V3.0.4</span></div>
         </section>
       </div>
       <button class="iconbtn" id="themeBtn" type="button" aria-label="Switch to light mode" title="Switch theme">◐</button>
@@ -144,6 +144,6 @@
     </form>
   </dialog>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
-  <script src="/static/app.js?v=3.0.3" defer></script>
+  <script src="/static/app.js?v=3.0.4" defer></script>
 </body>
 </html>

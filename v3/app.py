@@ -9,7 +9,7 @@ def home():
 
 @app.get("/health")
 def health():
-    return jsonify({"status":"ok","version":"3.0.3","storage":"browser-local"})
+    return jsonify({"status":"ok","version":"3.0.4","storage":"browser-local"})
 
 if __name__ == "__main__":
     app.run(host="127.0.0.1", port=int(os.environ.get("PORT", 5000)), debug=True)
