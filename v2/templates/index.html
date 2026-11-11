@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#1e1e1c">
+<title>BUNKED. — Attendance Control Room</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div class="grain"></div>
+<nav class="nav wrap">
+  <a class="logo" href="/">BUNKED<span>.</span></a>
+  <div class="navmeta">ATTENDANCE CONTROL ROOM <b>V.02</b></div>
+  <span class="live"><i></i> LOCAL MODE</span>
+</nav>
+<header class="hero wrap">
+  <div class="hero-copy">
+    <div class="eyebrow">THE STUDENT SURVIVAL TOOLKIT</div>
+    <h1>Skip smart.<br><em>Stay safe.</em></h1>
+    <p>The 75% attendance rule, minus the mental maths. Keep every subject in one place, log classes as they happen, and know where you stand.</p>
+    <button class="primary" id="addSubject">＋ ADD SUBJECT</button>
+    <button class="quiet" id="demoBtn">LOAD DEMO ↗</button>
+  </div>
+  <div class="hero-art" aria-hidden="true">
+    <div class="paper paper-one">75%<small>THE LINE YOU DON'T<br>WANT TO CROSS</small></div>
+    <div class="paper paper-two">SHOW UP<br>WHEN IT<br>COUNTS.</div>
+    <div class="scribble">NO<br>GUESSWORK.</div>
+  </div>
+</header>
+<main class="wrap">
+  <section class="section-head">
+    <div><div class="eyebrow">01 / YOUR SUBJECTS</div><h2>Pick your battlefield.</h2></div>
+    <div class="summary" id="summary">LOADING YOUR SEMESTER…</div>
+  </section>
+  <section id="subjectList" class="subject-grid">
+    <div class="empty">Pulling your attendance ledger into focus…</div>
+  </section>
+  <section class="bottom-grid">
+    <article class="darkcard">
+      <div class="eyebrow">02 / THE CLASSROOM FORECAST</div>
+      <h2>What if you skip <span id="forecastN">1</span> more?</h2>
+      <input id="forecast" type="range" min="0" max="20" value="1">
+      <div class="forecast-numbers"><span>0</span><strong id="forecastPct">—</strong><span>20</span></div>
+      <p id="forecastVerdict">Select a subject to see how future absences affect your attendance.</p>
+    </article>
+    <article class="note-card">
+      <div class="eyebrow">03 / UNDER THE HOOD</div>
+      <h2>The math doesn't lie.</h2>
+      <div class="equation">SKIPS = floor((A − 0.75H) ÷ 0.75)</div>
+      <p>For a 75% requirement. A = classes attended, H = classes held. The result is rounded down to a whole class. Your college may calculate attendance by subject or course component, so check its official policy.</p>
+    </article>
+  </section>
+  <footer class="footer"><span>BUNKED. © 2026 — BUILT FOR THE ATTENDANCE-ANXIOUS.</span><span>STAY CURIOUS. DON'T GET DEBARRED.</span></footer>
+</main>
+<div class="toast" id="toast" role="status"></div>
+<script src="/static/app.js" defer></script>
+</body>
+</html>
