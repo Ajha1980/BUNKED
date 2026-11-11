@@ -3,7 +3,7 @@ import sqlite3, os, math
 from pathlib import Path
 
 BASE = Path(__file__).resolve().parent
-DB = BASE / "bunked.db"
+DB = Path("/tmp/bunked.db") if os.environ.get("VERCEL") else BASE / "bunked.db"
 app = Flask(__name__)
 
 def db():

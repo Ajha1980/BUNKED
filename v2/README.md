@@ -19,3 +19,8 @@ python app.py
 Then open http://127.0.0.1:5000.
 
 The app stores its local database in `bunked.db` beside `app.py`.
+
+
+## Vercel deployment note
+
+On Vercel, this initial deployment stores SQLite data in the function's temporary `/tmp` directory so the app can run in the serverless environment. That storage is **not durable or shared between function instances**; subjects and logs may reset after a cold start or be inconsistent across instances. For reliable real-world attendance records, connect a managed database (for example Neon Postgres or Turso) before relying on the hosted app as the only copy of your data.
