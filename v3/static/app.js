@@ -15,6 +15,8 @@ let soundSettings = { master: true, click: true, typing: true, volume: 88 };
 let audioContext = null;
 let mousePackBuffer = null;
 let mousePackPromise = null;
+let keyboardPackBuffer = null;
+let keyboardPackPromise = null;
 let lastKeySoundAt = 0;
 
 function makeId() {
@@ -77,6 +79,88 @@ function getAudioContext() {
   if (audioContext.state === 'suspended') audioContext.resume().catch(() => {});
   return audioContext;
 }
+const KEYBOARD_SAMPLES = Object.freeze({
+  space: { offset: 0.000000, duration: 0.410000 },
+  digit1: { offset: 0.470000, duration: 0.276625 },
+  digit2: { offset: 0.806625, duration: 0.257708 },
+  digit3: { offset: 1.124333, duration: 0.230000 },
+  digit4: { offset: 1.414333, duration: 0.230000 },
+  digit5: { offset: 1.704333, duration: 0.238792 },
+  digit6: { offset: 2.003125, duration: 0.220000 },
+  digit7: { offset: 2.283125, duration: 0.326917 },
+  digit8: { offset: 2.670042, duration: 0.296292 },
+  backspace: { offset: 3.026333, duration: 0.357042 },
+  enter: { offset: 3.443375, duration: 0.260000 },
+  shift: { offset: 3.763375, duration: 0.319667 }
+});
+const KEYBOARD_CODE_MAP = (() => {
+  const map = {
+    Space: 'space', Backspace: 'backspace', Delete: 'backspace',
+    Enter: 'enter', NumpadEnter: 'enter',
+    ShiftLeft: 'shift', ShiftRight: 'shift',
+    Digit1: 'digit1', Digit2: 'digit2', Digit3: 'digit3',
+    Digit4: 'digit4', Digit5: 'digit5', Digit6: 'digit6',
+    Digit7: 'digit7', Digit8: 'digit8',
+    Digit9: 'digit5', Digit0: 'digit5'
+  };
+  // The supplied Mechvibes config maps every letter to backspace. Keep that mapping.
+  'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').forEach((letter) => { map['Key' + letter] = 'backspace'; });
+  // The uploaded config assigns punctuation and other modifiers to Digit5's sample.
+  ['Comma','Period','Slash','Semicolon','Quote','BracketLeft','BracketRight','Minus','Equal',
+   'ControlRight','ControlLeft','ContextMenu','MetaRight','MetaLeft','AltRight','AltLeft',
+   'CapsLock','Tab','Backquote','Backslash'].forEach((code) => { map[code] = 'digit5'; });
+  return Object.freeze(map);
+})();
+function keyboardSampleForCode(code) {
+  return KEYBOARD_CODE_MAP[code] || null;
+}
+function preloadKeyboardPack() {
+  if (!keyboardPackPromise) {
+    const parts = Array.from({ length: 9 }, (_, index) =>
+      '/static/audio/keyboard-sprite.part' + String(index + 1).padStart(2, '0') + '.txt'
+    );
+    keyboardPackPromise = Promise.all(parts.map((path) =>
+      fetch(path, { cache: 'force-cache' }).then((response) => {
+        if (!response.ok) throw new Error('Keyboard sound pack segment could not be loaded: ' + path);
+        return response.text();
+      })
+    )).then((chunks) => {
+      const binary = atob(chunks.join(''));
+      const bytes = new Uint8Array(binary.length);
+      for (let index = 0; index < binary.length; index += 1) bytes[index] = binary.charCodeAt(index);
+      return getAudioContext().decodeAudioData(bytes.buffer);
+    }).then((buffer) => {
+      keyboardPackBuffer = buffer;
+      return buffer;
+    }).catch((error) => {
+      keyboardPackPromise = null;
+      console.warn('BUNKED keyboard sound pack:', error);
+      return null;
+    });
+  }
+  return keyboardPackPromise;
+}
+function playKeyboardPackSample(context, level, keyCode) {
+  if (!keyboardPackBuffer) return false;
+  const sampleName = keyboardSampleForCode(keyCode);
+  const sample = sampleName ? KEYBOARD_SAMPLES[sampleName] : null;
+  if (!sample) return false;
+  const source = context.createBufferSource();
+  const gain = context.createGain();
+  source.buffer = keyboardPackBuffer;
+  gain.gain.setValueAtTime(Math.min(1.7, level * 1.45), context.currentTime);
+  source.connect(gain);
+  gain.connect(context.destination);
+  source.start(context.currentTime, sample.offset, sample.duration);
+  return true;
+}
+function keyCodeFromInputEvent(event) {
+  if (event.inputType === 'deleteContentBackward' || event.inputType === 'deleteContentForward') return 'Backspace';
+  if (event.data === ' ') return 'Space';
+  if (event.data && /^[0-9]$/.test(event.data)) return 'Digit' + event.data;
+  if (event.data && /^[a-z]$/i.test(event.data)) return 'Key' + event.data.toUpperCase();
+  return 'Period';
+}
 function playMousePackSample(context, level, button = 'left') {
   if (!mousePackBuffer) return false;
   const samples = {
@@ -114,7 +198,7 @@ function preloadMousePack() {
   }
   return mousePackPromise;
 }
-function playUiSound(kind = 'click', preview = false, mouseButton = 'left') {
+function playUiSound(kind = 'click', preview = false, mouseButton = 'left', keyCode = 'KeyA') {
   if (document.hidden || !soundSettings.master) return;
   if (kind === 'click' && !soundSettings.click) return;
   if (kind === 'type' && !soundSettings.typing) return;
@@ -124,9 +208,13 @@ function playUiSound(kind = 'click', preview = false, mouseButton = 'left') {
   if (level <= 0) return;
   try {
     if (kind === 'type') {
-      playTone(context, 148, 72, 0.052 * level, 0.046, 'triangle');
-      playTone(context, 2180, 940, 0.023 * level, 0.014, 'square');
-      playNoise(context, 0.016 * level, 0.018, 1250);
+      if (!playKeyboardPackSample(context, level, keyCode)) {
+        preloadKeyboardPack();
+        // Temporary synthetic keycap while the uploaded sample sprite is loading.
+        playTone(context, 148, 72, 0.052 * level, 0.046, 'triangle');
+        playTone(context, 2180, 940, 0.023 * level, 0.014, 'square');
+        playNoise(context, 0.016 * level, 0.018, 1250);
+      }
     } else if (!playMousePackSample(context, level, mouseButton)) {
       preloadMousePack();
       playNoise(context, 0.052 * level, 0.018, 1550);
@@ -450,7 +538,6 @@ function wireEvents() {
     activeId = subjects[0].id;
     saveAll();
     selectSubject(activeId);
-preloadMousePack();
     toast('Subject and its class log deleted.');
   });
   $('demoBtn').addEventListener('click', () => {
@@ -496,8 +583,11 @@ preloadMousePack();
   });
   $('testType').addEventListener('click', () => {
     if (soundSettings.master && soundSettings.typing) {
-      playUiSound('type');
-      window.setTimeout(() => playUiSound('type'), 78);
+      const sequence = ['KeyA', 'Digit2', 'Space', 'Backspace', 'Enter', 'ShiftLeft'];
+      sequence.forEach((code, index) => {
+        window.setTimeout(() => playUiSound('type', false, 'left', code), index * 165);
+      });
+      preloadKeyboardPack();
     }
   });
   document.addEventListener('click', (event) => {
@@ -513,11 +603,12 @@ preloadMousePack();
     const field = event.target instanceof Element
       ? event.target.closest('input:not([type="range"]):not([type="checkbox"]):not([type="radio"]), textarea, [contenteditable="true"]')
       : null;
-    if (!field || !(event.key.length === 1 || ['Backspace', 'Delete', 'Enter'].includes(event.key))) return;
+    const keyCode = event.code || (event.key === ' ' ? 'Space' : '');
+    if (!field || !keyboardSampleForCode(keyCode)) return;
     const now = performance.now();
     if (now - lastKeySoundAt < 32) return;
     lastKeySoundAt = now;
-    playUiSound('type');
+    playUiSound('type', false, 'left', keyCode);
   }, true);
   // Mobile virtual keyboards may emit input events without a usable keydown event.
   document.addEventListener('input', (event) => {
@@ -528,7 +619,7 @@ preloadMousePack();
     const now = performance.now();
     if (now - lastKeySoundAt < 32) return;
     lastKeySoundAt = now;
-    playUiSound('type');
+    playUiSound('type', false, 'left', keyCodeFromInputEvent(event));
   }, true);
   document.addEventListener('pointerdown', (event) => {
     if ($('soundDeck').hidden || event.target.closest('#soundDeck') || event.target.closest('#soundBtn')) return;
@@ -564,3 +655,5 @@ applyTheme((() => { try { return localStorage.getItem(THEME_KEY) || 'dark'; } ca
 loadSoundSettings();
 wireEvents();
 selectSubject(activeId);
+preloadMousePack();
+preloadKeyboardPack();

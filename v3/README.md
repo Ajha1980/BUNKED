@@ -1,20 +1,18 @@
-# BUNKED V3.0.4 — Attendance Control Room
+# BUNKED V3.0.5 — Attendance Control Room
 
 A full-featured responsive attendance planner for desktop, tablets and phones.
 
 ## Features
-- Multiple subjects with horizontally swipeable subject tabs on narrow screens.
-- Individual classes-held, classes-attended and attendance-target controls.
-- One-tap Present and Missed logging with matching history entries and timestamps.
-- Browser-local saving of subjects and class history.
-- Live attendance percentage, safe bunk budget, recovery estimate and semester meter.
-- Future absence forecast slider and formula explanation.
-- Full dark/light theme, including paper-cut accents and the Sound Deck.
-- Sound Deck with master mute, separate mouse-click and mechanical-keyboard channels, 0–100 gain and test buttons.
-- Uploaded ASMR MOUSE recording for real left-click, right-click and side-button samples.
-- Synthesized mechanical typing sounds, including mobile virtual-keyboard input events.
-- Touch-sized controls, scrollable subject tabs, phone-friendly dialog and landscape handling.
-- Restrained hover/focus feedback on pointer devices and tap feedback on touch devices.
+- Multiple subjects, individual attendance targets, held/attended counters and safe-bunk budget.
+- One-tap Present/Missed logging with matching recent-history timestamps.
+- Browser-local persistence, forecast slider, formula explanation and semester meter.
+- Full dark/light theme with coordinated paper-cut details.
+- Sound Deck with master mute, separate mouse and keyboard channels, 0–100 gain and test buttons.
+- Uploaded ASMR MOUSE click samples and real keyboard-key samples from the AULA F75 MAX / Leobog Reaper pack.
+- Dedicated recordings for Space, digits 1–8, Backspace, Enter and Shift.
+- Keyboard letters and punctuation follow the mappings in the supplied Mechvibes configuration.
+- Mobile virtual-keyboard input maps text characters to the corresponding keyboard sound where the browser provides input data.
+- Touch-first responsive layout, swipeable subjects, mobile dialog and landscape handling.
 
 ## Live website
 https://bunked-arp21.vercel.app
@@ -26,8 +24,8 @@ python app.py
 ```
 Open the local development address printed by Flask (normally `http://127.0.0.1:5000`).
 
-## Sound pack credit
-The mouse click samples are from the user-supplied **ASMR MOUSE** Mechvibes pack by Angel Lozano. The config's left/right/side sample timing ranges are preserved in `static/audio/asmr-mouse.config.json`.
+## Sound pack credits
+- Mouse: **ASMR MOUSE** by Angel Lozano, supplied by the user.
+- Keyboard: **aula f75 max leobog reaper switch** by samuel quiceno, supplied by the user.
 
-## Data
-Subjects, attendance counts and class history save in browser local storage. Data stays in the same browser profile; it does not automatically sync between devices. Clearing site data may remove it.
+The supplied keyboard config maps A–Z keys to the Backspace recording and punctuation/modifier keys listed in that config to the Digit 5 recording. Those mappings are preserved.

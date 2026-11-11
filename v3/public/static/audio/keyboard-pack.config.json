@@ -1,0 +1,82 @@
+{
+  "config_version": "2",
+  "name": "aula f75 max leobog reaper switch",
+  "author": "samuel quiceno",
+  "description": "User-supplied mechanical keyboard sound pack integrated into the BUNKED V3 Sound Deck.",
+  "definition_method": "multi",
+  "soundpack_type": "Keyboard",
+  "source_audio_format": "OGG Vorbis, 48 kHz stereo",
+  "sprite_audio": "keyboard-sprite.ogg",
+  "sprite_delivery": "Compact mono 16 kHz OGG audio sprite; the V3 browser client loads and decodes the sample segments for mobile use.",
+  "samples": {
+    "Space": {
+      "file": "spacebar.ogg",
+      "offset_seconds": 0,
+      "duration_seconds": 0.41
+    },
+    "Digit1": {
+      "file": "1.ogg",
+      "offset_seconds": 0.47,
+      "duration_seconds": 0.276625
+    },
+    "Digit2": {
+      "file": "2.ogg",
+      "offset_seconds": 0.806625,
+      "duration_seconds": 0.257708
+    },
+    "Digit3": {
+      "file": "3(1).ogg",
+      "offset_seconds": 1.124333,
+      "duration_seconds": 0.23
+    },
+    "Digit4": {
+      "file": "4(2).ogg",
+      "offset_seconds": 1.414333,
+      "duration_seconds": 0.23
+    },
+    "Digit5": {
+      "file": "5.ogg",
+      "offset_seconds": 1.704333,
+      "duration_seconds": 0.238792
+    },
+    "Digit6": {
+      "file": "6.ogg",
+      "offset_seconds": 2.003125,
+      "duration_seconds": 0.22
+    },
+    "Digit7": {
+      "file": "7(1).ogg",
+      "offset_seconds": 2.283125,
+      "duration_seconds": 0.326917
+    },
+    "Digit8": {
+      "file": "8.ogg",
+      "offset_seconds": 2.670042,
+      "duration_seconds": 0.296292
+    },
+    "Backspace": {
+      "file": "backspace.ogg",
+      "offset_seconds": 3.026333,
+      "duration_seconds": 0.357042
+    },
+    "Enter": {
+      "file": "enter.ogg",
+      "offset_seconds": 3.443375,
+      "duration_seconds": 0.26
+    },
+    "ShiftLeft": {
+      "file": "shift.ogg",
+      "offset_seconds": 3.763375,
+      "duration_seconds": 0.319667
+    },
+    "ShiftRight": {
+      "file": "shift.ogg",
+      "offset_seconds": 3.763375,
+      "duration_seconds": 0.319667
+    }
+  },
+  "key_mappings": {
+    "KeyA-KeyZ": "backspace.ogg (as defined in supplied configuration)",
+    "Digit9,Digit0,Comma,Period,Slash,Semicolon,Quote,BracketLeft,BracketRight,Minus,Equal,Control,ContextMenu,Meta,Alt,CapsLock,Tab,Backquote,Backslash": "5.ogg (as defined in supplied configuration)"
+  }
+}

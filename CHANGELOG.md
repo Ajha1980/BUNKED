@@ -1,5 +1,13 @@
 # Changelog
 
+## v3.0.5
+- Integrated the user-supplied AULA F75 MAX / Leobog Reaper mechanical keyboard recordings.
+- Added dedicated original samples for Space, digits 1–8, Backspace, Enter and both Shift keys.
+- Preserved the supplied Mechvibes mappings for letters, punctuation and modifiers.
+- Added mobile virtual-keyboard character-to-sample mapping.
+- Added a six-key TEST KEYBOARD sequence and preloaded the keyboard sprite for smoother first use.
+- Kept the mouse pack, Sound Deck mute and independent sound-channel volume controls.
+
 ## v3.0.4
 - Replaced the synthesized mouse-click imitation with the user-supplied ASMR MOUSE recording.
 - Mapped the uploaded pack's MouseLeft, MouseRight and side-button sample ranges to interface mouse actions.
